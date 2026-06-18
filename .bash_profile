@@ -48,15 +48,6 @@ dolog() {
 }
 
 # ---------- everforest prompt ----------
-_ef_bg="\[\e[38;2;51;63;48m\]"
-_ef_green="\[\e[38;2;167;192;128m\]"
-_ef_aqua="\[\e[38;2;131;165;152m\]"
-_ef_orange="\[\e[38;2;230;152;117m\]"
-_ef_grey="\[\e[38;2;133;146;137m\]"
-_ef_yellow="\[\e[38;2;219;188;127m\]"
-_ef_red="\[\e[38;2;230;126;128m\]"
-_ef_reset="\[\e[0m\]"
-
 _git_branch() {
     local b
     b=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)
@@ -67,7 +58,25 @@ _venv_name() {
     [ -n "$VIRTUAL_ENV" ] && echo "($(basename "$VIRTUAL_ENV")) "
 }
 
-PS1="${_ef_grey}\$(_venv_name)${_ef_green}\u${_ef_grey}@${_ef_aqua}\h ${_ef_yellow}\w${_ef_orange}\$(_git_branch)${_ef_reset}\n${_ef_green}❯${_ef_reset} "
+if [ -n "$ZSH_VERSION" ]; then
+    _g='%{'"$(printf '\e[38;2;167;192;128m')"'%}'
+    _a='%{'"$(printf '\e[38;2;131;165;152m')"'%}'
+    _o='%{'"$(printf '\e[38;2;230;152;117m')"'%}'
+    _y='%{'"$(printf '\e[38;2;219;188;127m')"'%}'
+    _d='%{'"$(printf '\e[38;2;133;146;137m')"'%}'
+    _r='%{'"$(printf '\e[0m')"'%}'
+    setopt PROMPT_SUBST
+    PROMPT='${_d}$(_venv_name)${_g}%n${_d}@${_a}%m ${_y}%~${_o}$(_git_branch)${_r}
+${_g}❯${_r} '
+else
+    _g='\[\e[38;2;167;192;128m\]'
+    _a='\[\e[38;2;131;165;152m\]'
+    _o='\[\e[38;2;230;152;117m\]'
+    _y='\[\e[38;2;219;188;127m\]'
+    _d='\[\e[38;2;133;146;137m\]'
+    _r='\[\e[0m\]'
+    PS1="${_d}\$(_venv_name)${_g}\u${_d}@${_a}\h ${_y}\w${_o}\$(_git_branch)${_r}\n${_g}❯${_r} "
+fi
 
 # ---------- ls colors (everforest-ish) ----------
 export LS_COLORS='di=38;2;131;165;152:ln=38;2;219;188;127:ex=38;2;167;192;128:*.py=38;2;230;152;117:*.yaml=38;2;131;165;152:*.yml=38;2;131;165;152:*.json=38;2;219;188;127:*.md=38;2;133;146;137'
